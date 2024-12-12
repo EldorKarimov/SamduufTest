@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %} Result Page {% endblock %}
+
+{% block content %}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="result-body">
+            <main class="container">
+            
+            
+                <div class="result-container">
+                    <div class="result-questions">
+                        {% for user_ans in user_answers %}
+                        
+                        <h5> {{ forloop.counter }}. {{ user_ans.question.name }}</h5>
+                        {% if user_ans.selected_answer.is_correct %}
+                        <div class="result-answer correct-answer">✔️ {{ user_ans.selected_answer.name }}</div>
+                        {% else %}
+                        <div class="result-answer wrong-answer">❌ {{ user_ans.selected_answer.name }}</div>
+                        {% endif %}
+        
+                        {% endfor %}
+                    </div>
+            
+                    <div class="result-summary">
+                        <h3>Natijalar</h3>
+                        <ul>
+                            <li><b>Imtihon:</b> {{ attempt.test.title }} </li>
+                            <li><b>O'qituvchi:</b> {{ attempt.test.science.teacher.get_full_name }} </li>
+                            <li><b>O'quvchi:</b> {{ attempt.user.get_full_name}} </li>
+                            <li><b>Sinf:</b> {{ attempt.user.pupil.pupil_class }} </li>
+                            <li><b>Testga ketgan vaqt:</b> {{ attempt.get_time_taken }} </li>
+                            <li><b>To'g'ri:</b> {{ attempt.score }}</li>
+                            <li><b>Foiz:</b> {{ attempt.get_total }}%</li>
+                        </ul>
+                        <button class=".result-button" onclick="window.print()">Chop etish</button>
+                    </div>
+                </div>
+            
+            
+            </main>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

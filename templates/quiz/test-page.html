@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+
+{% block title %} Test Sahifasi {% endblock %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0 font-size-18">Test Sahifasi</h4>
+
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <div class="row">
+            <div class="col-xl-9">
+                <div class="card">
+                    <div class="card-body">
+                        <h1>{{ test.title }}</h1>
+                        <form method="post" class="row mt-4">
+                            {% csrf_token %}
+                            {% for question in test.get_questions %}
+                            <div class="mb-3">
+                                <label>{{ forloop.counter }}. {{ question.name }}</label>
+                                {% for answer in question.get_answers %}
+                                <div>
+                                    <input type="radio" name="{{ question.id }}" id="{{ answer.id }}" value="{{ answer.id }}">
+                                    <label for="{{ answer.id }}">{{ answer.name }}</label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endfor %}
+                            
+                            <div class="col-sm-6">
+                                <div class="text-sm-end mt-2 mt-sm-0">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="mdi mdi-share-all me-1"></i> Yakunlash </button>
+                                </div>
+                            </div> <!-- end col -->
+                        </form> <!-- end row-->
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">Card Details</h5>
+                        
+                    </div>
+                 </div>
+                 
+            </div>
+        </div>
+        <!-- end row -->
+
+    </div> <!-- container-fluid -->
+</div>
+{% endblock %}

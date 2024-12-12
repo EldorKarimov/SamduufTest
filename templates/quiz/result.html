@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %} Result Page {% endblock %}
+
+{% block content %}
+<main class="page-content">
+    <div class="page-fluid">
+        <h1>{{ request.user.get_full_name }} - Test natijalari</h1>
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Berilgan vaqt</th>
+                <td scope="col">{{ test.duration }} minut</td>
+              </tr>
+              <tr>
+                <th scope="col">Ketgazilgan vaqt</th>
+                <td scope="col">{{ attempt.get_time_taken }}</td>
+              </tr>
+              <tr>
+                <th scope="col">Savollar soni</th>
+                <td scope="col">{{ test.number_of_questions }} ta</td>
+              </tr>
+              <tr>
+                <th scope="col">To'g'ri javoblar soni</th>
+                <td scope="col">{{ correct_answers_count }} ta</td>
+              </tr>
+              <tr>
+                <th scope="col">Ball</th>
+                <td scope="col">{{ attempt.score }}</td>
+              </tr>
+            </thead>
+          </table>
+        <a class="btn btn-lg btn-primary" href="{% url 'quiz:results' %}" role="button">Natijalar &raquo;</a>
+    </div>
+</main>
+{% endblock %}

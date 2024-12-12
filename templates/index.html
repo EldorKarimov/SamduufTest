@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Bosh Sahifa {% endblock %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0 font-size-18">Testlar</h4>
+
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">UI Elements</a></li>
+                            <li class="breadcrumb-item active">Cards</li>
+                        </ol>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            {% for test in tests %}
+            <div class="col-md-6 col-xl-3">
+        
+                <div class="card">
+                    <img class="card-img-top img-fluid" src="{{ test.image.url }}" alt="Card image cap">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ test.title }}</h4>
+                        <p class="card-text"> {{ test.description|slice:":50" }}... </p>
+                    </div>
+                    <div class="card-body">
+                        <a href="{{ test.get_url }}" class="btn btn-outline-primary">Ko'rish</a>
+                        
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

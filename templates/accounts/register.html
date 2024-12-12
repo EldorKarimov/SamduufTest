@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %} Registration page {% endblock %}
+
+{% block content %}
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <h3 class="text-center">Register</h3>
+                    <form method="post">
+                        {% csrf_token %}
+                       
+                        <!-- First Name -->
+                        <div class="mb-3">
+                            <label for="first_name" class="form-label">Ism</label>
+                            {% render_field form.first_name type="text" class="form-control" %}
+                        </div>
+                        <!-- Last Name -->
+                        <div class="mb-3">
+                            <label for="last_name" class="form-label">Familiya</label>
+                           
+                            {% render_field form.last_name type="text" class="form-control" %}
+                        </div>
+                        <!-- Patronymic -->
+                        <div class="mb-3">
+                            <label for="patronymic" class="form-label">Otasining ismi</label>
+                            
+                            {% render_field form.patronymic type="text" class="form-control" %}
+                        </div>
+                        <!-- Username -->
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Foydalanuvchi nomi</label>
+                            {% render_field form.username type="text" class="form-control" %}
+                        </div>
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Parol</label>
+                            {% render_field form.password1 type="password" class="form-control" %}
+                        </div>
+                        <!-- Confirm Password -->
+                        <div class="mb-3">
+                            <label for="password_confirm" class="form-label">Parolni tasdiqlash</label>
+                            {% render_field form.password2 type="password" class="form-control" id="password_confirm" %}
+                        </div>
+                        <!-- Pupil Class -->
+                        <div class="mb-3">
+                            <label for="pupil_class" class="form-label">Sinf</label>
+                            {% render_field pupil_form.pupil_class class="form-select" %}
+                        </div>
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
