@@ -24,6 +24,8 @@ class Test(BaseModel):
     image = models.ImageField(upload_to='media/test/images', verbose_name=_("image"))
     number_of_questions = models.IntegerField(default=1, verbose_name=_("number of questions"))
     is_available = models.BooleanField(default=False)
+    start_time = models.DateTimeField(verbose_name=_("start time"))
+    end_time = models.DateTimeField(verbose_name=_("end time"))
 
     def __str__(self):
         return self.title

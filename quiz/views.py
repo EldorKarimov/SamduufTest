@@ -5,6 +5,7 @@ from django import http
 from django.utils import timezone
 from django.contrib import messages
 
+from .forms import QuestionsAddForm
 from .models import *
 
 class HomePageView(View):
@@ -97,3 +98,47 @@ class ResultDetailView(LoginRequiredMixin, View):
         }
         return render(request, "quiz/result-detail.html", context)
         
+
+class TestListView(LoginRequiredMixin, View):
+    def get(self, request):
+        tests = Test.objects.all()
+        context = {
+            'tests':tests
+        }
+        return render(request, 'quiz/test-list.html', context)
+
+class QuestionAddView(LoginRequiredMixin, View):
+    def get(self, request, test_id):
+        test = get_object_or_404(Test, id = test_id)
+        form = QuestionsAddForm()
+        return render(request, 'quiz/add-questions.html', {'form':form})
+    def post(self, request, test_id):
+        test = get_object_or_404(Test, id = test_id)
+        form = QuestionsAddForm(request.POST)
+        if form.is_valid():
+            questions_data = form.cleaned_data['questions']
+            try:
+                questions_answers = questions_data.strip().split('===')
+                
+                for block in questions_answers:  
+                    lines = block.strip().split("\n")
+                    question_text = lines[0].lstrip('#') 
+                    
+                    question = Question.objects.create(
+                        test = test,
+                        name = question_text
+                    )
+                    
+                    for line in lines[1:]:
+                        is_correct = line.startswith("+")  
+                        answer_text = line[1:].strip() 
+                        Answer.objects.create(
+                            question = question, 
+                            name = answer_text,
+                            is_correct = is_correct
+                        )
+
+                messages.success(request, "Savollar muvaffaqiyatli qo'shildi!")
+                return http.HttpResponse("welcome")
+            except Exception as e:
+                messages.error(request, f"Xato yuz berdi: {e}")
