@@ -223,8 +223,7 @@
                 </div>
             </div>
             {% else %}
-            <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary me-3" style="padding: 3px;">Tizimga kirish</a>
-            <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary">Ro'yxatdan o'tish</a>
+            <a href="{% url 'accounts:auth' %}" class="btn btn-outline-primary me-3" style="padding: 3px;">Tizimga kirish</a>
             {% endif %}
 
             <div class="dropdown d-inline-block">
