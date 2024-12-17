@@ -32,10 +32,3 @@ class HemisApi:
 
         response = requests.get(user_url, headers=headers)
         return response.json()
-    
-user_data = HemisApi()
-obj = user_data.user_data_json('455221100037', '1423qrwe')
-print(obj.get('data').keys())
-print(obj.get('data').get('faculty').get('name'))
-print(obj.get('data').get('specialty'))
-print(obj.get('data').get('group'))

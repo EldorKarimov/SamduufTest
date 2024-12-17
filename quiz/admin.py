@@ -16,7 +16,7 @@ class AnswerInline(admin.TabularInline):
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created', 'is_multiple_choice')
+    list_display = ('name', 'created', 'is_available', 'is_multiple_choice')
 
     inlines = [AnswerInline]
 
