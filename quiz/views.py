@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django import http
 from django.utils import timezone
 from django.contrib import messages
+from django.db import transaction
 
 from .forms import QuestionsAddForm
 from .models import *
@@ -49,26 +50,31 @@ class TestPageView(LoginRequiredMixin, View):
         attempt = UserAttempt.objects.filter(user = request.user, test = test).last()
         if attempt.is_completed:
             return http.HttpResponse("Siz allaqachon testni tugatgansiz")
-        score = 0
-        correct_answers_count = 0
-        for question in test.get_questions:
-            selected_answer_id = request.POST.get(str(question.id))
-            if selected_answer_id:
-                selected_answer = Answer.objects.get(id = selected_answer_id)
-                user_answer = UserAnswer.objects.create(
-                    attempt = attempt,
-                    question = question,
-                    selected_answer = selected_answer,
-                    is_correct = selected_answer.is_correct
-                )
-                user_answer.save()
-                if selected_answer.is_correct:
-                    score += question.mark
-                    correct_answers_count += 1
-        attempt.score = score
-        attempt.time_taken = timezone.now() - attempt.created
-        attempt.is_completed = True
-        attempt.save()
+        try:
+            with transaction.atomic():
+                score = 0
+                correct_answers_count = 0
+                for question in Question.objects.filter(test = test):
+                    selected_answer_id = request.POST.get(str(question.id))
+                    if selected_answer_id:
+                        selected_answer = Answer.objects.get(id = selected_answer_id)
+                        print(selected_answer.name)
+                        user_answer = UserAnswer.objects.create(
+                            attempt = attempt,
+                            question = question,
+                            selected_answer = selected_answer,
+                            is_correct = selected_answer.is_correct
+                        )
+                        user_answer.save()
+                        if selected_answer.is_correct:
+                            score += question.mark
+                            correct_answers_count += 1
+                attempt.score = score
+                attempt.time_taken = timezone.now() - attempt.created
+                attempt.is_completed = True
+                attempt.save()
+        except Exception as e:
+            return http.HttpResponse(f"Xatolik yuz berdi. {e}")
 
         context = {
             "test":test,
