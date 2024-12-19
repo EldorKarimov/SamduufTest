@@ -5,6 +5,7 @@ from django import http
 from django.utils import timezone
 from django.contrib import messages
 from django.db import transaction
+from django.core.cache import cache
 
 from .forms import QuestionsAddForm
 from .models import *
@@ -13,7 +14,7 @@ class HomePageView(View):
     def get(self, request):
         tests = Test.objects.filter(is_available = True)
         context = {
-            'tests':tests
+            'tests':tests,
         }
         return render(request, 'index.html', context)
     
@@ -21,28 +22,45 @@ class TestDetailView(LoginRequiredMixin, View):
     def get(self, request, test_id):
         test = get_object_or_404(Test, id = test_id)
         context = {
-            'test':test
+            'test':test,
+            'this_cache':cache.get('hacktivist')
         }
         return render(request, 'quiz/test-detail.html', context)
     
 class TestPageView(LoginRequiredMixin, View):
     def get(self, request, test_id):
         test = get_object_or_404(Test, id = test_id)
-
+        
+        questions = test.get_questions
+        if not cache.get(request.user.username, False):    
+            cache.set(request.user.username, questions, timeout=60 * test.attempts_allowed)
+            request.session['start_time'] = timezone.now().isoformat()
         attempt_count = UserAttempt.objects.filter(user = request.user, test = test).count()
         if attempt_count >= test.attempts_allowed:
             messages.error(request, f"Testga {test.attempts_allowed} marta urinish berilgan sizning urinishingiz tugadi.")
             return redirect('quiz:test_detail', test.id)
         
         context = {
-            'test':test
+            'test':test,
+            'questions':cache.get(request.user.username)
         }
-        UserAttempt.objects.create(
-            user = request.user,
-            test = test,
-            score = 0,
-            time_taken = timezone.timedelta(0),
-        )
+        user_attempt = UserAttempt.objects.filter(user = request.user, test = test).last()
+        if user_attempt is None:
+            UserAttempt.objects.create(
+                user = request.user,
+                test = test,
+                score = 0,
+                time_taken = timezone.timedelta(0),
+                is_started = True
+            )
+        if not user_attempt.is_started and not user_attempt.is_completed:
+            UserAttempt.objects.create(
+                user = request.user,
+                test = test,
+                score = 0,
+                time_taken = timezone.timedelta(0),
+                is_started = True
+            )
         return render(request, 'quiz/test-page.html', context)
     
     def post(self, request, test_id):
@@ -73,6 +91,7 @@ class TestPageView(LoginRequiredMixin, View):
                 attempt.time_taken = timezone.now() - attempt.created
                 attempt.is_completed = True
                 attempt.save()
+                cache.delete(request.user.username)
         except Exception as e:
             return http.HttpResponse(f"Xatolik yuz berdi. {e}")
 

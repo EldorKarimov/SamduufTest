@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 
-
 {% block title %} Test Sahifasi {% endblock %}
 
 {% block content %}
@@ -12,7 +11,6 @@
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                     <h4 class="mb-sm-0 font-size-18">Test Sahifasi</h4>
-
                 </div>
             </div>
         </div>
@@ -23,7 +21,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h1>{{ test.title }}</h1>
-                        <form method="post" class="row mt-4">
+                        <form method="post" class="row mt-4" id="testForm">
                             {% csrf_token %}
                             {% for question in test.get_questions %}
                             <div class="mb-3">
@@ -39,7 +37,7 @@
                             
                             <div class="col-sm-6">
                                 <div class="text-sm-end mt-2 mt-sm-0">
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" class="btn btn-primary" id="submitBtn">
                                         <i class="mdi mdi-share-all me-1"></i> Yakunlash </button>
                                 </div>
                             </div> <!-- end col -->
@@ -50,15 +48,43 @@
             <div class="col-xl-3">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title mb-4">Card Details</h5>
-                        
+                        <h5 class="card-title mb-4">Test Vaqti</h5>
+                        <div id="timer"></div> <!-- Remaining time will be shown here -->
                     </div>
                  </div>
-                 
             </div>
         </div>
         <!-- end row -->
 
     </div> <!-- container-fluid -->
 </div>
+
+<script>
+    // Sessiondan start_timeni olish
+    const startTime = new Date("{{ request.session.start_time }}");
+
+    // Vaqtni hisoblash va orqaga sanash
+    function updateTimer() {
+        const currentTime = new Date();
+        const timeRemaining = startTime.getTime() + ({{ test.duration }} * 60000) - currentTime.getTime();
+
+        if (timeRemaining <= 0) {
+            document.getElementById('timer').innerText = "00:00";
+            clearInterval(timerInterval);
+            submitTest();  // Avtomatik tarzda testni yakunlash
+        } else {
+            const minutes = Math.floor(timeRemaining / 60000);
+            const seconds = Math.floor((timeRemaining % 60000) / 1000);
+            document.getElementById('timer').innerText = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        }
+    }
+
+    // Avtomatik tarzda formani yuborish
+    function submitTest() {
+        document.getElementById('testForm').submit();  // Formani yuborish
+    }
+
+    // Start the timer
+    const timerInterval = setInterval(updateTimer, 1000);
+</script>
 {% endblock %}

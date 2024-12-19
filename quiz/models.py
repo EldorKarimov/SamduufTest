@@ -45,11 +45,11 @@ class Test(BaseModel):
         
 
 class Question(BaseModel):
-    test = models.ForeignKey(Test, related_name="questions", on_delete=models.CASCADE)
-    name = models.TextField()
-    mark = models.IntegerField(default=1)
-    is_multiple_choice = models.BooleanField(default=False)
-    is_available = models.BooleanField(default=True)
+    test = models.ForeignKey(Test, related_name="questions", on_delete=models.CASCADE, verbose_name=_("test"))
+    name = models.TextField(verbose_name=_("name"))
+    mark = models.IntegerField(default=1, verbose_name=_("mark"))
+    is_multiple_choice = models.BooleanField(default=False, verbose_name=_("is multiple choice"))
+    is_available = models.BooleanField(default=True, verbose_name=_("is available"))
 
     def __str__(self):
         return self.name
@@ -62,20 +62,21 @@ class Question(BaseModel):
         return answers
 
 class Answer(BaseModel):
-    question = models.ForeignKey(Question, related_name="answers", on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    is_correct = models.BooleanField(default=False)
+    question = models.ForeignKey(Question, related_name="answers", on_delete=models.CASCADE, verbose_name=_("question"))
+    name = models.CharField(max_length=255, verbose_name=_("name"))
+    is_correct = models.BooleanField(default=False, verbose_name=_("is correct"))
 
     def __str__(self):
         return self.name
 
 class UserAttempt(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    test = models.ForeignKey(Test, on_delete=models.CASCADE)
-    score = models.IntegerField()
-    time_taken = models.DurationField()
-    date_taken = models.DateTimeField(auto_now_add=True)
-    is_completed = models.BooleanField(default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("user"))
+    test = models.ForeignKey(Test, on_delete=models.CASCADE, verbose_name=_("test"))
+    score = models.IntegerField(_("score"))
+    time_taken = models.DurationField(_("time taken"))
+    date_taken = models.DateTimeField(auto_now_add=True, verbose_name=_("date taken"))
+    is_started = models.BooleanField(default=False, verbose_name=_('is started'))
+    is_completed = models.BooleanField(default=False, verbose_name=_('is completed'))
 
     def __str__(self):
         return f"{self.user.get_full_name}-{self.test.title}"
@@ -93,10 +94,10 @@ class UserAttempt(BaseModel):
         return total
 
 class UserAnswer(BaseModel):
-    attempt = models.ForeignKey(UserAttempt, related_name="user_answers", on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    selected_answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
-    is_correct = models.BooleanField()
+    attempt = models.ForeignKey(UserAttempt, related_name="user_answers", on_delete=models.CASCADE, verbose_name=_("attempt"))
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name=_("question"))
+    selected_answer = models.ForeignKey(Answer, on_delete=models.CASCADE, verbose_name=_("selected answer"))
+    is_correct = models.BooleanField(_("is correct"))
 
     def __str__(self):
         return f"{self.question.name}-{self.attempt.score}"
