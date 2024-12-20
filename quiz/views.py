@@ -32,7 +32,7 @@ class TestPageView(LoginRequiredMixin, View):
         test = get_object_or_404(Test, id = test_id)
         
         questions = test.get_questions
-        if not cache.get(request.user.username, False):    
+        if not cache.get(request.user.username, False):
             cache.set(request.user.username, questions, timeout=60 * test.attempts_allowed)
             request.session['start_time'] = timezone.now().isoformat()
         attempt_count = UserAttempt.objects.filter(user = request.user, test = test).count()
